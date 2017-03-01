@@ -34,13 +34,13 @@ for file in all_files:
     print file
     data = pd.read_csv(file)
     data.columns = data.iloc[0] # make second row the column row
+    # data.reindex(data.index.drop(1)) # drop the second row (original column row)
     print data.columns
-    # if data['PUBLIC'] == 'NSW1':
-        # demand = data.filter(['2016/09/10','FORECAST_OPERATIONAL_DEMAND_HH','DEMAND'], axis=1)
-    # forecasted_demand = data['FORECAST_OPERATIONAL_DEMAND_HH']
-    # print forecasted_demand
-    # actual_demand = data['DEMAND']
-    # print actual_demand
+    
+    data = data.loc[data['REGIONID'] == 'NSW1']
 
+    demand = data.filter(['INTERVAL_DATETIME','OPERATIONAL_DEMAND_POE10',
+                          'OPERATIONAL_DEMAND_POE50', 'OPERATIONAL_DEMAND_POE90'], axis=1)
     break
+print demand.columns
 
