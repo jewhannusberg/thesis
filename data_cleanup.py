@@ -17,12 +17,12 @@ def list_files(dir):
     all_files = []
     for root, _, files in os.walk(dir):
         for name in files:
-            if name is '.DS_Store':
-                # TODO: Need a better check here, pretty sure this doesn't work
-                continue
+            if '.CSV' in name:
+                all_files.append(os.path.join(root, name))                                
             else:
                 # TODO: Need to add a check here for any wrong file types
-                all_files.append(os.path.join(root, name))                
+                continue
+                
     return all_files
 
 
@@ -33,11 +33,14 @@ all_files = list_files(DIR)
 for file in all_files:
     print file
     data = pd.read_csv(file)
+    data.columns = data.iloc[0] # make second row the column row
     print data.columns
+    # if data['PUBLIC'] == 'NSW1':
+        # demand = data.filter(['2016/09/10','FORECAST_OPERATIONAL_DEMAND_HH','DEMAND'], axis=1)
     # forecasted_demand = data['FORECAST_OPERATIONAL_DEMAND_HH']
     # print forecasted_demand
     # actual_demand = data['DEMAND']
     # print actual_demand
-    # demand = data.filter(['A','FORECAST_OPERATIONAL_DEMAND_HH','DEMAND'], axis=1)
+
     break
 
