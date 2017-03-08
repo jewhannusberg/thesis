@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 DIR = '../ForecastedData' # Move back a directory
+PLOTTING = False
 
 def list_files(dir):
     '''
@@ -50,10 +51,10 @@ for file in all_files:
     #     break
     # ctr += 1
 
-
-plt.plot(demand['OPERATIONAL_DEMAND_POE10'].values, 'r', label='POE10', linewidth=0.75)
-plt.plot(demand['OPERATIONAL_DEMAND_POE50'].values, 'b', label='POE50', linewidth=0.75)
-plt.plot(demand['OPERATIONAL_DEMAND_POE90'].values, 'g', label='POE90', linewidth=0.75)
-plt.legend(loc='upper left', shadow=True)
-plt.title('Demand distributions for %s' % names[0])
-plt.show()
+if PLOTTING == True:
+    plt.plot(demand['OPERATIONAL_DEMAND_POE10'].values, 'r', label='POE10', linewidth=0.75)
+    plt.plot(demand['OPERATIONAL_DEMAND_POE50'].values, 'b', label='POE50', linewidth=0.75)
+    plt.plot(demand['OPERATIONAL_DEMAND_POE90'].values, 'g', label='POE90', linewidth=0.75)
+    plt.legend(loc='upper left', shadow=True)
+    plt.title('Demand distributions for %s' % names[0])
+    plt.show()
