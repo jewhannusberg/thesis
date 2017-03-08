@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 DIR = '../ForecastedData' # Move back a directory
-PLOTTING = False
+PLOTTING = True
 
 def list_files(dir):
     '''
@@ -37,17 +37,22 @@ all_files, names = list_files(DIR)
 
 daily_demand = pd.DataFrame() # initialise total dataframe
 for file in all_files:
-    # print file
+    print file
     data = pd.read_csv(file)
+
     data.columns = data.iloc[0] # make second row the column row
-    # data.reindex(data.index.drop(1)) # drop the second row (original column row)
+
     data = data.loc[data['REGIONID'] == 'NSW1'] # keep only NSW data
 
+    # keep the following columns, discard the remainder
     demand = data.filter(['INTERVAL_DATETIME','OPERATIONAL_DEMAND_POE10',
                           'OPERATIONAL_DEMAND_POE50', 'OPERATIONAL_DEMAND_POE90'], axis=1)
-    tot += len(demand['INTERVAL_DATETIME'])
-    daily_demand = daily_demand.append(demand, ignore_index=True)
 
+    # take only the latest estimate of each interval from the files
+    # e.g. for 0030 take 0000 forecast of POE10, POE50, and POE90
+    daily_demand = daily_demand.append(demand.iloc[0], ignore_index=True)
+    # daily_demand = daily_demand.append(demand, ignore_index=True)
+# print daily_demand
 if PLOTTING == True:
     plt.plot(demand['OPERATIONAL_DEMAND_POE10'].values, 'r', label='POE10', linewidth=0.75)
     plt.plot(demand['OPERATIONAL_DEMAND_POE50'].values, 'b', label='POE50', linewidth=0.75)
