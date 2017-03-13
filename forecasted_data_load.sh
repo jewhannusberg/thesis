@@ -32,10 +32,15 @@
 # currently requires manual input of date
 # eventually should take user input of any number of days (e.g. 08/02/17 - 31/02/17)
 
+
+# NEEDS TO BE CHANGED
 month="February"
-day=10
+day=11
 year=2017
 MON=02
+
+
+
 url="http://nemweb.com.au/Reports/CURRENT/Operational_Demand/FORECAST_HH/"
 wget -q -O- "$url" | 
 sed 's/<br>/<br>\'$'\n/g' | 

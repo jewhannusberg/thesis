@@ -8,7 +8,7 @@ import sys
 import glob
 import zipfile
 
-DIR = '../ForecastedData/10February2017/' # this should go through every folder in the directory
+DIR = '../ForecastedData/11February2017/' # this should go through every folder in the directory
 
 # move listScraper.sh, data_prep.py, items.txt (for now), links.txt (for now) into /thesisb
 
