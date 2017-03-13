@@ -89,8 +89,6 @@ if PLOTTING == True:
 
     plt.legend(loc='upper left', shadow=True)
     plt.title('Demand distributions for %s' % forecast_names[0])
-    # plt.show()
-
 
     # overlay actual demand
     plt.show()
