@@ -35,12 +35,26 @@
 
 # NEEDS TO BE CHANGED
 month="February"
-day=11
-year=2017
+days=(20 21 22 23 24 25 26 27 28)
+day=19
 MON=02
+year=2017
 
-
-
+# for ((i=0; i<${#days[*]}; i++));
+# do
+#     url="http://nemweb.com.au/Reports/CURRENT/Operational_Demand/FORECAST_HH/"
+#     wget -q -O- "$url" | 
+#     sed 's/<br>/<br>\'$'\n/g' | 
+#     # grep "$month $day" items.txt | 
+#     egrep -o "PUBLIC_FORECAST_OPERATIONAL_DEMAND_HH_$year$MON${days[i]}.+\.zip\"" | 
+#     sed "s/\"//g" > links.txt 
+#     while read line
+#     do
+#         echo "$url$line" 
+#         wget --directory-prefix=/Users/youhancheery/Documents/Thesis/ForecastedData/${days[i]}$month$year -i "$url$line"
+#     done < links.txt
+# done
+# 19February2017 INCOMPLETE
 url="http://nemweb.com.au/Reports/CURRENT/Operational_Demand/FORECAST_HH/"
 wget -q -O- "$url" | 
 sed 's/<br>/<br>\'$'\n/g' | 

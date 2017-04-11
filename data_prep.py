@@ -8,8 +8,8 @@ import sys
 import glob
 import zipfile
 
-DIR = '../ForecastedData/11February2017/' # this should go through every folder in the directory
-
+DIR = '../ForecastedData/16February2017/' # this should go through every folder in the directory
+DIRx = '../ForecastedData/'
 # move listScraper.sh, data_prep.py, items.txt (for now), links.txt (for now) into /thesisb
 
 
@@ -31,6 +31,10 @@ def unzip_data(directory):
             print "deleting files not ending in .CSV"
             os.remove(fname)
 
-
-scrub_data(DIR)
-unzip_data(DIR)
+days = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+temp_DIRx = ""
+for i in days:
+    temp_DIRx = DIRx + str(i) + "February2017/"
+    print temp_DIRx 
+    scrub_data(temp_DIRx)
+    unzip_data(temp_DIRx)
