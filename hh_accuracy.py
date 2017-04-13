@@ -6,7 +6,7 @@ import pandas as pd
 from data_cleanup import list_files
 from data_cleanup import clean_fnames
 from plotting import plot_error
-
+from plotting import plot_exceedance
 # Test on a single day first
 FORECASTED_DIR = '../ForecastedData/09February2017' # Move back a directory to required date
 ACTUAL_DIR = '../ActualData/09February2017'
@@ -35,6 +35,7 @@ def forecasted_demand_dataframes(forecast_files, forecast_names, state):
 
     return forecasts
 
+# TODO: Need to read in ALL actual demand files
 def actual_demand_dataframes(actual_files, actual_names, state):
     actual_demand = pd.DataFrame() # initialise total dataframe
     for file in actual_files:
@@ -54,30 +55,54 @@ def actual_demand_dataframes(actual_files, actual_names, state):
     return actual_demand
 
 def exceeds_actual_counter(error, actual_demand):
-    return None
+    # Boolean arrays. If exceeds, contains true. Else contains false
+    POE10_over = np.empty(0)
+    POE50_over = np.empty(0)
+    POE90_over = np.empty(0)
 
-def error_calculation(forecasted_demand, actual_demand):
-    # For actual discrepencies between POEx and actual_demand
-    error = pd.DataFrame()
-    error = forecasted_demand.merge(actual_demand)
-
-    # For frequency of innacuracy
+    # Frequency count of exceedance
     count_POE10_over = 0
     count_POE50_over = 0
     count_POE90_over = 0
 
+    # Calculate how often actual is greater than predicted
+    # This occurs when actual - POEx > 0
+    # Convert to numpy array for easier data operations
+    error.OPERATIONAL_DEMAND_POE10 = error.OPERATIONAL_DEMAND_POE10.as_matrix()
+    error.OPERATIONAL_DEMAND_POE50 = error.OPERATIONAL_DEMAND_POE50.as_matrix()
+    error.OPERATIONAL_DEMAND_POE90 = error.OPERATIONAL_DEMAND_POE90.as_matrix()
+
+    POE10_over = np.array([error.OPERATIONAL_DEMAND_POE10 > 0])
+    POE50_over = np.array([error.OPERATIONAL_DEMAND_POE50 > 0])
+    POE90_over = np.array([error.OPERATIONAL_DEMAND_POE90 > 0])
+
+    count_POE10_over = np.sum(POE10_over)
+    count_POE50_over = np.sum(POE50_over)
+    count_POE90_over = np.sum(POE90_over)
+
+    print count_POE10_over
+    print count_POE50_over
+    print count_POE90_over
+
+    return POE10_over, POE50_over, POE90_over
+
+def error_calculation(forecasted_demand, actual_demand):
+    # For actual discrepencies between POEx and actual_demand
+    error = pd.DataFrame()
+
+    # TODO: NEED TO FIX THIS - ONLY CARES FOR THE FIRST 48 DATAPOINTS
+    error = forecasted_demand.merge(actual_demand)
+
     # POE10 error
     error.OPERATIONAL_DEMAND_POE10 = error.OPERATIONAL_DEMAND.values.astype(float) - error.OPERATIONAL_DEMAND_POE10.values.astype(float)
-    count_POE10_over += error.OPERATIONAL_DEMAND_POE10
-    # Convert to numpy array for easier data operations
-    count_POE10_over = count_POE10_over.as_matrix()
-    exit()
-
-    # if actual exceeds POE iterate counter
     # POE50 error
     error.OPERATIONAL_DEMAND_POE50 = error.OPERATIONAL_DEMAND.values.astype(float) - error.OPERATIONAL_DEMAND_POE50.values.astype(float)
     # POE90 error
     error.OPERATIONAL_DEMAND_POE90 = error.OPERATIONAL_DEMAND.values.astype(float) - error.OPERATIONAL_DEMAND_POE90.values.astype(float)
+
+    POE10_over, POE50_over, POE90_over = exceeds_actual_counter(error, actual_demand)
+ 
+    plot_exceedance(forecasted_demand, actual_demand, error.OPERATIONAL_DEMAND_POE10)
 
     return error
 
@@ -95,9 +120,9 @@ actual_demand = actual_demand_dataframes(actual_files, actual_names, state=STATE
 
 # Compute deviation from actual demand
 for f_file in range(len(forecast_files)):
-    print f_file
+    # print f_file
     error = error_calculation(forecasts[clean_fnames(forecast_files[f_file])], actual_demand)
-    print error
+    # print error
     break
 
-plot_error(error)
+plot_error(error, actual_demand)
