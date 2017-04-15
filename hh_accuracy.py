@@ -3,10 +3,12 @@
 import os
 import numpy as np
 import pandas as pd
+import collections
 from data_cleanup import list_files
 from data_cleanup import clean_fnames
 from plotting import plot_error
 from plotting import plot_exceedance
+
 # Test on a single day first
 FORECASTED_DIR = '../ForecastedData/09February2017' # Move back a directory to required date
 ACTUAL_DIR = '../ActualData/09February2017'
@@ -14,7 +16,11 @@ STATE = 'NSW1'
 
 def forecasted_demand_dataframes(forecast_files, forecast_names, state):
     demand_poe = pd.DataFrame() # initialise total dataframe
-    forecasts = {}
+
+    '''SUPER FUCKING IMPORTANT'''
+    # TODO: Use an ordered dictionary to preserve the order the data was read in!!
+    forecasts = collections.OrderedDict()
+
     # print forecast_names
     for fname in forecast_files:
         # print file
@@ -71,6 +77,7 @@ def exceeds_actual_counter(error, actual_demand):
     error.OPERATIONAL_DEMAND_POE10 = error.OPERATIONAL_DEMAND_POE10.as_matrix()
     error.OPERATIONAL_DEMAND_POE50 = error.OPERATIONAL_DEMAND_POE50.as_matrix()
     error.OPERATIONAL_DEMAND_POE90 = error.OPERATIONAL_DEMAND_POE90.as_matrix()
+    print error.OPERATIONAL_DEMAND_POE10
 
     POE10_over = np.array([error.OPERATIONAL_DEMAND_POE10 > 0])
     POE50_over = np.array([error.OPERATIONAL_DEMAND_POE50 > 0])
@@ -88,6 +95,7 @@ def exceeds_actual_counter(error, actual_demand):
 
 def error_calculation(forecasted_demand, actual_demand):
     # For actual discrepencies between POEx and actual_demand
+
     error = pd.DataFrame()
 
     # TODO: NEED TO FIX THIS - ONLY CARES FOR THE FIRST 48 DATAPOINTS
@@ -95,6 +103,7 @@ def error_calculation(forecasted_demand, actual_demand):
 
     # POE10 error
     error.OPERATIONAL_DEMAND_POE10 = error.OPERATIONAL_DEMAND.values.astype(float) - error.OPERATIONAL_DEMAND_POE10.values.astype(float)
+
     # POE50 error
     error.OPERATIONAL_DEMAND_POE50 = error.OPERATIONAL_DEMAND.values.astype(float) - error.OPERATIONAL_DEMAND_POE50.values.astype(float)
     # POE90 error
@@ -102,10 +111,10 @@ def error_calculation(forecasted_demand, actual_demand):
 
     POE10_over, POE50_over, POE90_over = exceeds_actual_counter(error, actual_demand)
  
-    plot_exceedance(forecasted_demand, actual_demand, error.OPERATIONAL_DEMAND_POE10)
+    # plot_exceedance(forecasted_demand, actual_demand, error.OPERATIONAL_DEMAND_POE10)
 
     return error
-
+'''
 # Return a list of all the files within the folder and subfolders
 forecast_files, forecast_names = list_files(FORECASTED_DIR)
 
@@ -120,9 +129,7 @@ actual_demand = actual_demand_dataframes(actual_files, actual_names, state=STATE
 
 # Compute deviation from actual demand
 for f_file in range(len(forecast_files)):
-    # print f_file
     error = error_calculation(forecasts[clean_fnames(forecast_files[f_file])], actual_demand)
-    # print error
-    break
 
 plot_error(error, actual_demand)
+'''
