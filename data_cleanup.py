@@ -36,10 +36,10 @@ def list_files(dir):
 
     return all_files, names
 
-def clean_fnames(fname):
-    message = re.search(FORECASTED_DIR + "/(.+)\.CSV", fname)
+def clean_fnames(fname, dirx):
+    message = re.search(dirx + "/(.+)\.CSV", fname)
     if message:
-        print message.group(1)
+        # print message.group(1)
         return message.group(1)
     else:
         return "Invalid name: " + str(fname)

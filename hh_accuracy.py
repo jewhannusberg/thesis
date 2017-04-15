@@ -14,7 +14,7 @@ FORECASTED_DIR = '../ForecastedData/09February2017' # Move back a directory to r
 ACTUAL_DIR = '../ActualData/09February2017'
 STATE = 'NSW1'
 
-def forecasted_demand_dataframes(forecast_files, forecast_names, state):
+def forecasted_demand_dataframes(forecast_files, forecast_names, state, dirx):
     demand_poe = pd.DataFrame() # initialise total dataframe
 
     '''SUPER FUCKING IMPORTANT'''
@@ -37,7 +37,7 @@ def forecasted_demand_dataframes(forecast_files, forecast_names, state):
         # e.g. for 0030 take 0000 forecast of POE10, POE50, and POE90
         # demand_poe = demand_poe.append(demand.iloc[0], ignore_index=True)
         # daily_demand = daily_demand.append(demand, ignore_index=True)
-        forecasts[clean_fnames(fname)] = demand
+        forecasts[clean_fnames(fname, dirx)] = demand
 
     return forecasts
 
@@ -45,7 +45,7 @@ def forecasted_demand_dataframes(forecast_files, forecast_names, state):
 def actual_demand_dataframes(actual_files, actual_names, state):
     actual_demand = pd.DataFrame() # initialise total dataframe
     for file in actual_files:
-        print file
+        # print file
         data = pd.read_csv(file)
 
         # slightly hacky solution to remove duplicate OPERATIONAL_DEMAND columns
@@ -129,7 +129,7 @@ actual_demand = actual_demand_dataframes(actual_files, actual_names, state=STATE
 
 # Compute deviation from actual demand
 for f_file in range(len(forecast_files)):
-    error = error_calculation(forecasts[clean_fnames(forecast_files[f_file])], actual_demand)
+    error = error_calculation(forecasts[clean_fnames(forecast_files[f_file]), FORECASTED_DIR], actual_demand)
 
 plot_error(error, actual_demand)
 '''

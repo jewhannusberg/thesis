@@ -26,7 +26,7 @@ STATE = 'NSW1'
 forecast_files, forecast_names = list_files(FORECASTED_DIR)
 
 # Get a forecasted demand dataframe
-forecasts = forecasted_demand_dataframes(forecast_files, forecast_names, state=STATE)
+forecasts = forecasted_demand_dataframes(forecast_files, forecast_names, STATE, FORECASTED_DIR)
 
 # get actual demand data
 actual_files, actual_names = list_files(ACTUAL_DIR)
@@ -34,8 +34,29 @@ actual_files, actual_names = list_files(ACTUAL_DIR)
 # Get an actual demand dataframe
 actual_demand = actual_demand_dataframes(actual_files, actual_names, state=STATE)
 
-
 # Compute deviation from actual demand
-for f_file in range(len(forecast_files)):
-    print forecasts(f_files).columns
-    exit()
+# for f_file in range(len(forecast_files)):
+#     print "FILE NAME:" + clean_fnames(forecast_files[f_file], FORECASTED_DIR)
+#     print forecasts[clean_fnames(forecast_files[f_file], FORECASTED_DIR)]
+
+# for key, value in forecasts.iteritems():
+    # print key
+    # print value.INTERVAL_DATETIME
+    # value.merge(value, left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
+
+# Attempt to merge two dataframes based on column INTERVAL_DATETIME
+# SUCCESS!
+# check = pd.DataFrame()
+# check = forecasts['PUBLIC_FORECAST_OPERATIONAL_DEMAND_HH_201702202000_20170220193204'].merge(
+#     forecasts['PUBLIC_FORECAST_OPERATIONAL_DEMAND_HH_201702202030_20170220200204'],
+#     left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
+# check = check.transpose()
+# check.to_csv('check_merge.csv')
+
+# Extend to all the forecasts in a day
+full_df = pd.DataFrame()
+for key in forecasts.iterkeys():
+    full_df = forecasts[key].merge(forecasts[key], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
+full_df = full_df.transpose()
+full_df.to_csv('test1.csv')
+
