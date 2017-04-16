@@ -54,9 +54,19 @@ actual_demand = actual_demand_dataframes(actual_files, actual_names, state=STATE
 # check.to_csv('check_merge.csv')
 
 # Extend to all the forecasts in a day
-full_df = pd.DataFrame()
+full_df = forecasts[forecasts.keys()[0]]
+forecasts.pop(forecasts.keys()[0], None)
 for key in forecasts.iterkeys():
-    full_df = forecasts[key].merge(forecasts[key], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
+    # print key
+    # print forecasts.keys()[forecasts.keys().index(key) + 1]
+    # print "------------------------------------------------------------------------"
+    # GOAT line
+    # print "key: " + forecasts.keys()[len(forecasts)-1]
+    # exit()
+    if key != forecasts.keys()[len(forecasts)-1]:
+        print key
+        full_df = full_df.merge(forecasts.values()[forecasts.keys().index(key)+1], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
+full_df = full_df.merge(forecasts[forecasts.keys()[len(forecasts)-1]], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
 full_df = full_df.transpose()
 full_df.to_csv('test1.csv')
 
