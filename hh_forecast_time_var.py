@@ -13,6 +13,7 @@ import pandas as pd
 import collections
 from data_cleanup import list_files
 from data_cleanup import clean_fnames
+from data_cleanup import rename_forecast_columns
 from plotting import plot_error
 from plotting import plot_exceedance
 from hh_accuracy import forecasted_demand_dataframes
@@ -52,6 +53,12 @@ actual_demand = actual_demand_dataframes(actual_files, actual_names, state=STATE
 #     left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
 # check = check.transpose()
 # check.to_csv('check_merge.csv')
+
+# Rename columns
+forecasts = rename_forecast_columns(forecasts)
+for key,value in forecasts.iteritems():
+    print value.columns
+    exit()
 
 # Extend to all the forecasts in a day
 full_df = forecasts[forecasts.keys()[0]]

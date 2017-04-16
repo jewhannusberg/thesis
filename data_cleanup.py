@@ -43,3 +43,22 @@ def clean_fnames(fname, dirx):
         return message.group(1)
     else:
         return "Invalid name: " + str(fname)
+
+def _get_date(name):
+    date = re.search(".+_(\d+)_.+", name)
+    if date:
+        return date.group(1)
+    else:
+        return "Invalid name: " + str(name) 
+
+def rename_forecast_columns(forecasts):
+    # Rename POE columns in all dataframes -- move this to data_cleanup.py when done and working
+    for name, df in forecasts.iteritems():
+        # key = date
+        # value = actual df
+
+        df = df.rename(columns = {'OPERATIONAL_DEMAND_POE10':'OPERATIONAL_DEMAND_POE10_'+_get_date(name), 
+                                'OPERATIONAL_DEMAND_POE50':'OPERATIONAL_DEMAND_POE10_'+_get_date(name),
+                                'OPERATIONAL_DEMAND_POE90':'OPERATIONAL_DEMAND_POE10_'+_get_date(name)})
+        forecasts[name] = df
+    return forecasts
