@@ -56,9 +56,6 @@ actual_demand = actual_demand_dataframes(actual_files, actual_names, state=STATE
 
 # Rename columns
 forecasts = rename_forecast_columns(forecasts)
-for key,value in forecasts.iteritems():
-    print value.columns
-    exit()
 
 # Extend to all the forecasts in a day
 full_df = forecasts[forecasts.keys()[0]]
@@ -73,7 +70,7 @@ for key in forecasts.iterkeys():
     if key != forecasts.keys()[len(forecasts)-1]:
         print key
         full_df = full_df.merge(forecasts.values()[forecasts.keys().index(key)+1], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
-full_df = full_df.merge(forecasts[forecasts.keys()[len(forecasts)-1]], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
+# full_df = full_df.merge(forecasts[forecasts.keys()[len(forecasts)-1]], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
 full_df = full_df.transpose()
 full_df.to_csv('test1.csv')
 
