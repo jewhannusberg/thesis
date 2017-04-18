@@ -6,19 +6,19 @@ import pandas as pd
 import collections
 from data_cleanup import list_files
 from data_cleanup import clean_fnames
+from data_cleanup import clean_actual_names
 from plotting import plot_error
 from plotting import plot_exceedance
 
 # Test on a single day first
-FORECASTED_DIR = '../ForecastedData/09February2017' # Move back a directory to required date
-ACTUAL_DIR = '../ActualData/09February2017'
-STATE = 'NSW1'
+# FORECASTED_DIR = '../ForecastedData/09February2017' # Move back a directory to required date
+# ACTUAL_DIR = '../ActualData/09February2017'
+# STATE = 'NSW1'
 
 def forecasted_demand_dataframes(forecast_files, forecast_names, state, dirx):
     demand_poe = pd.DataFrame() # initialise total dataframe
 
     '''SUPER FUCKING IMPORTANT'''
-    # TODO: Use an ordered dictionary to preserve the order the data was read in!!
     forecasts = collections.OrderedDict()
 
     # print forecast_names
@@ -42,11 +42,12 @@ def forecasted_demand_dataframes(forecast_files, forecast_names, state, dirx):
     return forecasts
 
 # TODO: Need to read in ALL actual demand files
-def actual_demand_dataframes(actual_files, actual_names, state):
+def actual_demand_dataframes(actual_files, actual_names, state, dirx):
     actual_demand = pd.DataFrame() # initialise total dataframe
-    for file in actual_files:
-        # print file
-        data = pd.read_csv(file)
+
+    actuals = collections.OrderedDict()
+    for fname in actual_files:
+        data = pd.read_csv(fname)
 
         # slightly hacky solution to remove duplicate OPERATIONAL_DEMAND columns
         drop_cols = [0,1,2,3]
@@ -58,7 +59,10 @@ def actual_demand_dataframes(actual_files, actual_names, state):
 
         # keep the following columns, discard the remainder
         actual_demand = data[['INTERVAL_DATETIME','OPERATIONAL_DEMAND']]
-    return actual_demand
+
+        # Dictionary of actual demand
+        actuals[clean_actual_names(fname, dirx)] = actual_demand   
+    return actuals
 
 def exceeds_actual_counter(error, actual_demand):
     # Boolean arrays. If exceeds, contains true. Else contains false

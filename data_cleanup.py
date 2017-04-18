@@ -31,15 +31,20 @@ def list_files(dir):
                 all_files.append(os.path.join(root, name))                                
             else:
                 # TODO: Need to add a check here for any wrong file types
-                print "Wrong file type detected:", name 
+                # print "Wrong file type detected:", name 
                 continue
 
     return all_files, names
+def clean_actual_names(fname, dirx):
+    message = re.search('/.+_(\d+)_.+\.CSV', fname)
+    if message:
+        return message.group(1)
+    else:
+        return "Invalid name: " + str(fname)
 
 def clean_fnames(fname, dirx):
     message = re.search(dirx + "/(.+)\.CSV", fname)
     if message:
-        # print message.group(1)
         return message.group(1)
     else:
         return "Invalid name: " + str(fname)
@@ -49,16 +54,23 @@ def _get_date(name):
     if date:
         return date.group(1)
     else:
-        return "Invalid name: " + str(name) 
+        return "Invalid name: " + str(name)
 
 def rename_forecast_columns(forecasts):
-    # Rename POE columns in all dataframes -- move this to data_cleanup.py when done and working
+    # Rename POE columns in all dataframes
     for name, df in forecasts.iteritems():
         # key = date
         # value = actual df
 
         df = df.rename(columns = {'OPERATIONAL_DEMAND_POE10':'OPERATIONAL_DEMAND_POE10_'+_get_date(name), 
-                                'OPERATIONAL_DEMAND_POE50':'OPERATIONAL_DEMAND_POE10_'+_get_date(name),
-                                'OPERATIONAL_DEMAND_POE90':'OPERATIONAL_DEMAND_POE10_'+_get_date(name)})
+                                'OPERATIONAL_DEMAND_POE50':'OPERATIONAL_DEMAND_POE50_'+_get_date(name),
+                                'OPERATIONAL_DEMAND_POE90':'OPERATIONAL_DEMAND_POE90_'+_get_date(name)})
         forecasts[name] = df
     return forecasts
+
+def rename_actual_columns(actuals):
+    # Rename OPERATIONAL_DEMAND columns in all dataframes
+    for name, df in actuals.iteritems():
+        df = df.rename(columns = {'OPERATIONAL_DEMAND':'OPERATIONAL_DEMAND_'+name})
+        actuals[name] = df
+    return actuals

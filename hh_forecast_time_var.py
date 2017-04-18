@@ -11,34 +11,34 @@ import os
 import numpy as np
 import pandas as pd
 import collections
-from data_cleanup import list_files
-from data_cleanup import clean_fnames
-from data_cleanup import rename_forecast_columns
+import data_cleanup
 from plotting import plot_error
 from plotting import plot_exceedance
+from plotting import plot_forecast_vs_poe
 from hh_accuracy import forecasted_demand_dataframes
 from hh_accuracy import actual_demand_dataframes
 
-FORECASTED_DIR = '../ForecastedData/20February2017' # Move back a directory to required date
-ACTUAL_DIR = '../ActualData/20February2017'
+DATE = '20February2017'
+FORECASTED_DIR = '../ForecastedData/' + DATE # Move back a directory to required date
+ACTUAL_DIR = '../ActualData/' #+ DATE
 STATE = 'NSW1'
 
 # Return a list of all the files within the folder and subfolders
-forecast_files, forecast_names = list_files(FORECASTED_DIR)
+forecast_files, forecast_names = data_cleanup.list_files(FORECASTED_DIR)
 
 # Get a forecasted demand dataframe
 forecasts = forecasted_demand_dataframes(forecast_files, forecast_names, STATE, FORECASTED_DIR)
 
 # get actual demand data
-actual_files, actual_names = list_files(ACTUAL_DIR)
+actual_files, actual_names = data_cleanup.list_files(ACTUAL_DIR)
 
 # Get an actual demand dataframe
-actual_demand = actual_demand_dataframes(actual_files, actual_names, state=STATE)
+actuals = actual_demand_dataframes(actual_files, actual_names, STATE, ACTUAL_DIR)
 
 # Compute deviation from actual demand
 # for f_file in range(len(forecast_files)):
-#     print "FILE NAME:" + clean_fnames(forecast_files[f_file], FORECASTED_DIR)
-#     print forecasts[clean_fnames(forecast_files[f_file], FORECASTED_DIR)]
+#     print "FILE NAME:" + data_cleanup.clean_fnames(forecast_files[f_file], FORECASTED_DIR)
+#     print forecasts[data_cleanup.clean_fnames(forecast_files[f_file], FORECASTED_DIR)]
 
 # for key, value in forecasts.iteritems():
     # print key
@@ -54,23 +54,26 @@ actual_demand = actual_demand_dataframes(actual_files, actual_names, state=STATE
 # check = check.transpose()
 # check.to_csv('check_merge.csv')
 
-# Rename columns
-forecasts = rename_forecast_columns(forecasts)
+# Rename columns -- needed for merge
+forecasts = data_cleanup.rename_forecast_columns(forecasts)
+actuals = data_cleanup.rename_actual_columns(actuals)
 
 # Extend to all the forecasts in a day
 full_df = forecasts[forecasts.keys()[0]]
 forecasts.pop(forecasts.keys()[0], None)
 for key in forecasts.iterkeys():
-    # print key
-    # print forecasts.keys()[forecasts.keys().index(key) + 1]
-    # print "------------------------------------------------------------------------"
-    # GOAT line
-    # print "key: " + forecasts.keys()[len(forecasts)-1]
-    # exit()
-    if key != forecasts.keys()[len(forecasts)-1]:
-        print key
+    if key != forecasts.keys()[len(forecasts)-1]: # Prevents index error at last key
+        # print key
         full_df = full_df.merge(forecasts.values()[forecasts.keys().index(key)+1], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
-# full_df = full_df.merge(forecasts[forecasts.keys()[len(forecasts)-1]], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
-full_df = full_df.transpose()
-full_df.to_csv('test1.csv')
+# This will only put 1 days worth of actual demand
+for key in actuals.iterkeys():
+    if key != actuals.keys()[len(actuals)-1]:
+        full_df = full_df.merge(actuals[key], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
+
+# Uncomment to save the dataframe to a csv transposed
+# full_df = full_df.transpose()
+# full_df.to_csv(DATE + '.csv')
+
+plot_forecast_vs_poe(full_df, time='201702200000', dates=actuals.keys()[0:len(actuals)-1])
+
 

@@ -3,7 +3,7 @@ Plot findings here
 '''
 import numpy as np
 import matplotlib.pyplot as plt
-
+import matplotlib.cm as cm
 def plot_error(error, actual_demand):
     x_ax =  np.arange(len(error.OPERATIONAL_DEMAND))
     fig, ax = plt.subplots(1)
@@ -39,4 +39,22 @@ def plot_data(demand_poe, actual_demand):
     plt.plot(actual_demand['OPERATIONAL_DEMAND'].values, 'k:', label='Actual Demand', linewidth=1.5)
     plt.legend(loc='upper left', shadow=True)
     plt.title('Demand distributions for %s' % forecast_names[0])
+    plt.show()
+
+def plot_forecast_vs_poe(df, time, dates):
+    labels = []
+    for interval in df.INTERVAL_DATETIME:
+        labels.append(interval)
+    plt.plot(df['OPERATIONAL_DEMAND_POE10_'+time].values, 'r', label='POE10', linewidth=0.75)
+    plt.plot(df['OPERATIONAL_DEMAND_POE50_'+time].values, 'b', label='POE50', linewidth=0.75)
+    plt.plot(df['OPERATIONAL_DEMAND_POE90_'+time].values, 'g', label='POE90', linewidth=0.75)
+    # colors = cm.rainbow(np.linspace(0, 1, len(dates)))
+    # use color=colors[ix] to cycle through colour spectrum
+    for ix, date in enumerate(dates):
+        plt.plot(df['OPERATIONAL_DEMAND_'+date].values, 'k:', linewidth=1.6)
+    # plt.xticks(range(len(labels)), labels, rotation='horizontal')
+    plt.xlabel('Time')
+    plt.ylabel('Demand')
+    plt.legend(loc='upper left', shadow=True)
+    plt.title('Demand distributions for %s' % time)
     plt.show()
