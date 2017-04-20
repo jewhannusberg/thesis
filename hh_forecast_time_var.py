@@ -11,14 +11,16 @@ import os
 import numpy as np
 import pandas as pd
 import collections
+'''Module imports'''
 import data_cleanup
 from plotting import plot_error
 from plotting import plot_exceedance
 from plotting import plot_forecast_vs_poe
-from hh_accuracy import forecasted_demand_dataframes
 from hh_accuracy import actual_demand_dataframes
+from hh_accuracy import forecasted_demand_dataframes
+from hh_accuracy import error_calculation_dictionaries
 
-DATE = '20February2017'
+DATE = '31March2017'
 FORECASTED_DIR = '../ForecastedData/' + DATE # Move back a directory to required date
 ACTUAL_DIR = '../ActualData/' #+ DATE
 STATE = 'NSW1'
@@ -70,10 +72,14 @@ for key in actuals.iterkeys():
     if key != actuals.keys()[len(actuals)-1]:
         full_df = full_df.merge(actuals[key], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
 
-# Uncomment to save the dataframe to a csv transposed
-# full_df = full_df.transpose()
-# full_df.to_csv(DATE + '.csv')
+'''Uncomment to save the dataframe to a csv transposed
+Comment for any plotting requirements
+Need to apply this for all data'''
+full_df = full_df.transpose()
+full_df.to_csv('../HH_FinalData/'+ DATE + '.csv')
 
-plot_forecast_vs_poe(full_df, time='201702200000', dates=actuals.keys()[0:len(actuals)-1])
+# error = error_calculation_dictionaries(forecasts, actuals)
+
+# plot_forecast_vs_poe(full_df, time='201702200000', dates=actuals.keys()[0:len(actuals)-1])
 
 

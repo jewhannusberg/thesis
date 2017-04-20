@@ -118,6 +118,11 @@ def error_calculation(forecasted_demand, actual_demand):
     # plot_exceedance(forecasted_demand, actual_demand, error.OPERATIONAL_DEMAND_POE10)
 
     return error
+
+def error_calculation_dictionaries(forecasts, actuals):
+
+    return None
+
 '''
 # Return a list of all the files within the folder and subfolders
 forecast_files, forecast_names = list_files(FORECASTED_DIR)

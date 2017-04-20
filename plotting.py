@@ -52,7 +52,7 @@ def plot_forecast_vs_poe(df, time, dates):
     # use color=colors[ix] to cycle through colour spectrum
     for ix, date in enumerate(dates):
         plt.plot(df['OPERATIONAL_DEMAND_'+date].values, 'k:', linewidth=1.6)
-    # plt.xticks(range(len(labels)), labels, rotation='horizontal')
+    # plt.xticks(range(len(labels),5), labels, rotation='horizontal')
     plt.xlabel('Time')
     plt.ylabel('Demand')
     plt.legend(loc='upper left', shadow=True)

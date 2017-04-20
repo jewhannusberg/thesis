@@ -12,10 +12,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # better to read these in as user input and modify constants to fit
-FORECASTED_DIR = '../ForecastedData/09February2017' # Move back a directory to required date
-ACTUAL_DIR = '../ActualData/09February2017'
-PLOTTING1 = False
-PLOTTING2 = False
+# FORECASTED_DIR = '../ForecastedData/09February2017' # Move back a directory to required date
+# ACTUAL_DIR = '../ActualData/09February2017'
+# PLOTTING1 = False
+# PLOTTING2 = False
 
 def list_files(dir):
     '''
