@@ -25,7 +25,7 @@ def list_files(dir):
     names = []
     for root, _, files in os.walk(dir):
         for name in files:
-            if '.CSV' in name:
+            if '.CSV' in name or '.csv' in name:
                 # clean up names to only contain date
                 names.append(name) # probably change to dictionary for when reading in more data
                 all_files.append(os.path.join(root, name))                                
@@ -35,6 +35,14 @@ def list_files(dir):
                 continue
 
     return all_files, names
+
+def remove_csv(name):
+    message = re.search('(.+)\.csv', name)
+    if message:
+        return message.group(1)
+    else:
+        return "Invalid name: " + str(name)
+
 def clean_actual_names(fname, dirx):
     message = re.search('/.+_(\d+)_.+\.CSV', fname)
     if message:

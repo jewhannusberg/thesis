@@ -11,7 +11,7 @@ import os
 import numpy as np
 import pandas as pd
 import collections
-'''Module imports'''
+'''Self-written module imports'''
 import data_cleanup
 from plotting import plot_error
 from plotting import plot_exceedance
@@ -68,15 +68,33 @@ for key in forecasts.iterkeys():
         # print key
         full_df = full_df.merge(forecasts.values()[forecasts.keys().index(key)+1], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
 # This will only put 1 days worth of actual demand
+actual = actuals[actuals.keys()[0]]
+# actuals.pop(actuals.keys()[0], None)
+
+# Rename to become overall operational demand
+# Very dangerous line - needs to be changed if the first data file changes
+# Currently first file is 09/02/2017
+# actual = actual.rename(columns = {'OPERATIONAL_DEMAND_20170209':'ACTUAL_DEMAND'})
+
 for key in actuals.iterkeys():
     if key != actuals.keys()[len(actuals)-1]:
+        # actual.ACTUAL_DEMAND += actuals[key]['OPERATIONAL_DEMAND_'+key] # Very hacky - relies on keys being consistent
         full_df = full_df.merge(actuals[key], left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
+# full_df = full_df.merge(actual, left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
+# print full_df.columns
+# exit()
+
+# for key in actuals.iterkeys():
+    # if key in full_df.columns
+
+
+
 
 '''Uncomment to save the dataframe to a csv transposed
 Comment for any plotting requirements
 Need to apply this for all data'''
-full_df = full_df.transpose()
-full_df.to_csv('../HH_FinalData/'+ DATE + '.csv')
+# full_df = full_df.transpose()
+# full_df.to_csv('../HH_FinalData/'+ DATE + '.csv')
 
 # error = error_calculation_dictionaries(forecasts, actuals)
 

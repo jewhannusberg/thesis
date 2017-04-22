@@ -48,12 +48,12 @@ def plot_forecast_vs_poe(df, time, dates):
     plt.plot(df['OPERATIONAL_DEMAND_POE10_'+time].values, 'r', label='POE10', linewidth=0.75)
     plt.plot(df['OPERATIONAL_DEMAND_POE50_'+time].values, 'b', label='POE50', linewidth=0.75)
     plt.plot(df['OPERATIONAL_DEMAND_POE90_'+time].values, 'g', label='POE90', linewidth=0.75)
-    # colors = cm.rainbow(np.linspace(0, 1, len(dates)))
+    colors = cm.rainbow(np.linspace(0, 1, len(dates)))
     # use color=colors[ix] to cycle through colour spectrum
     for ix, date in enumerate(dates):
-        plt.plot(df['OPERATIONAL_DEMAND_'+date].values, 'k:', linewidth=1.6)
+        plt.plot(df['OPERATIONAL_DEMAND_'+date].values, color=colors[ix], linewidth=1.6)
     # plt.xticks(range(len(labels),5), labels, rotation='horizontal')
-    plt.xlabel('Time')
+    plt.xlabel('Samples')
     plt.ylabel('Demand')
     plt.legend(loc='upper left', shadow=True)
     plt.title('Demand distributions for %s' % time)
