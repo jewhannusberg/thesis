@@ -29,26 +29,49 @@ for filename in os.listdir(DIR):
         continue
 
 for fname, df in data.iteritems():
+
     error = df
+
     actual_demand = error['ACTUAL_DEMAND'][1:-1].astype(float)
     error_POE10 = error.filter(regex="^OPERATIONAL_DEMAND_POE10_\d+$")
-
-    # To plot POE10 ALL vs actual
-    plt.plot(error_POE10[1:-1].values)
-    plt.plot(actual_demand.values, color='k', linewidth=2)
-    plt.title("Actual demand against all POE10 forecasts for %s" % data_cleanup.remove_csv(fname))
-    plt.xlabel('Samples')
-    plt.ylabel('Demand (MW)')
-    plt.show()
-    plt.close()
-    exit()
 
     error_POE50 = error.filter(regex="^OPERATIONAL_DEMAND_POE50_\d+$")
 
     error_POE90 = error.filter(regex="^OPERATIONAL_DEMAND_POE90_\d+$")
 
+    '''To plot POE10 ALL vs actual'''
+    plt.plot(error_POE10[1:-1].values, linewidth=0.25)
+    plt.plot(actual_demand.values, color='k', linewidth=2)
+    plt.title("Actual demand against all POE10 forecasts for %s" % data_cleanup.remove_csv(fname))
+    plt.xlabel('Samples')
+    plt.ylabel('Demand (MW)')
+    plt.savefig("figures/poe10/POE10_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    # save to report figures also
+    plt.savefig("../Report/figures/poe10/POE10_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+
+    '''To plot POE50 ALL vs actual'''
+    plt.plot(error_POE50[1:-1].values, linewidth=0.25)
+    plt.plot(actual_demand.values, color='k', linewidth=2)
+    plt.title("Actual demand against all POE50 forecasts for %s" % data_cleanup.remove_csv(fname))
+    plt.xlabel('Samples')
+    plt.ylabel('Demand (MW)')
+    plt.savefig("figures/poe50/POE50_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    # save to report figures also
+    plt.savefig("../Report/figures/poe50/POE50_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+
+    '''To plot POE90 ALL vs actual'''
+    plt.plot(error_POE90[1:-1].values, linewidth=0.25)
+    plt.plot(actual_demand.values, color='k', linewidth=2)
+    plt.title("Actual demand against all POE90 forecasts for %s" % data_cleanup.remove_csv(fname))
+    plt.xlabel('Samples')
+    plt.ylabel('Demand (MW)')
+    plt.savefig("figures/poe90/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    # save to report figures also
+    plt.savefig("../Report/figures/poe90/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+
+    '''Subtraction'''
     # error = error[error.columns[1:-1]][1:-1] - error['ACTUAL_DEMAND'][1:-1].astype(float)
-    error_POE10 = error_POE10[1:-1].sub(actual_demand, axis=0)
+    # error_POE10 = error_POE10[1:-1].sub(actual_demand, axis=0)
     # print error_POE10
 
     # plt.plot(error_POE10.values)
@@ -57,6 +80,6 @@ for fname, df in data.iteritems():
     # plt.close()
 
     # error_POE10.to_csv(POE10_DIR + fname)
-    exit()
+    # exit()
 
 
