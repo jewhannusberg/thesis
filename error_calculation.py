@@ -7,6 +7,7 @@ import os
 import re
 import pandas as pd
 import data_cleanup
+import plotting
 from collections import OrderedDict
 import matplotlib.pyplot as plt
 DIR = '../clean_data/'
@@ -39,6 +40,10 @@ for fname, df in data.iteritems():
 
     error_POE90 = error.filter(regex="^OPERATIONAL_DEMAND_POE90_\d+$")
 
+    # plotting.save_all(error_POE10, fname)
+    # plotting.save_all(error_POE50, fname)
+    # plotting.save_all(error_POE90, fname)
+    """
     '''To plot POE10 ALL vs actual'''
     plt.plot(error_POE10[1:-1].values, linewidth=0.25)
     plt.plot(actual_demand.values, color='k', linewidth=2)
@@ -68,18 +73,17 @@ for fname, df in data.iteritems():
     plt.savefig("figures/poe90/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
     # save to report figures also
     plt.savefig("../Report/figures/poe90/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    """
 
     '''Subtraction'''
-    # error = error[error.columns[1:-1]][1:-1] - error['ACTUAL_DEMAND'][1:-1].astype(float)
-    # error_POE10 = error_POE10[1:-1].sub(actual_demand, axis=0)
-    # print error_POE10
+    error_POE10 = error_POE10[1:-1].sub(actual_demand, axis=0)
+    error_POE10.to_csv(POE10_DIR + fname)
 
-    # plt.plot(error_POE10.values)
-    # plt.plot(actual_demand.values, color='k', linewidth=2)
-    # plt.show()
-    # plt.close()
+    error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0)
+    error_POE50.to_csv(POE50_DIR + fname)
 
-    # error_POE10.to_csv(POE10_DIR + fname)
-    # exit()
+    error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0)
+    error_POE50.to_csv(POE50_DIR + fname)
+
 
 

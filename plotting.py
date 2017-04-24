@@ -58,3 +58,34 @@ def plot_forecast_vs_poe(df, time, dates):
     plt.legend(loc='upper left', shadow=True)
     plt.title('Demand distributions for %s' % time)
     plt.show()
+
+def save_all_plots(error, fname):
+    '''To plot POE10 ALL vs actual'''
+    plt.plot(error_POE10[1:-1].values, linewidth=0.25)
+    plt.plot(actual_demand.values, color='k', linewidth=2)
+    plt.title("Actual demand against all POE10 forecasts for %s" % data_cleanup.remove_csv(fname))
+    plt.xlabel('Samples')
+    plt.ylabel('Demand (MW)')
+    # plt.savefig("figures/poe10/POE10_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    # save to report figures also
+    plt.savefig("../Report/figures/poe10/POE10_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+
+    '''To plot POE50 ALL vs actual'''
+    plt.plot(error_POE50[1:-1].values, linewidth=0.25)
+    plt.plot(actual_demand.values, color='k', linewidth=2)
+    plt.title("Actual demand against all POE50 forecasts for %s" % data_cleanup.remove_csv(fname))
+    plt.xlabel('Samples')
+    plt.ylabel('Demand (MW)')
+    # plt.savefig("figures/poe50/POE50_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    # save to report figures also
+    plt.savefig("../Report/figures/poe50/POE50_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+
+    '''To plot POE90 ALL vs actual'''
+    plt.plot(error_POE90[1:-1].values, linewidth=0.25)
+    plt.plot(actual_demand.values, color='k', linewidth=2)
+    plt.title("Actual demand against all POE90 forecasts for %s" % data_cleanup.remove_csv(fname))
+    plt.xlabel('Samples')
+    plt.ylabel('Demand (MW)')
+    # plt.savefig("figures/poe90/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    # save to report figures also
+    plt.savefig("../Report/figures/poe90/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
