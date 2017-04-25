@@ -76,13 +76,13 @@ for fname, df in data.iteritems():
     """
 
     '''Subtraction'''
-    error_POE10 = error_POE10[1:-1].sub(actual_demand, axis=0)
+    error_POE10 = error_POE10[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
     error_POE10.to_csv(POE10_DIR + fname)
 
-    error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0)
+    error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
     error_POE50.to_csv(POE50_DIR + fname)
 
-    error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0)
+    error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
     error_POE50.to_csv(POE50_DIR + fname)
 
 

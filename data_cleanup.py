@@ -9,13 +9,10 @@ import math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
-# better to read these in as user input and modify constants to fit
-# FORECASTED_DIR = '../ForecastedData/09February2017' # Move back a directory to required date
-# ACTUAL_DIR = '../ActualData/09February2017'
-# PLOTTING1 = False
-# PLOTTING2 = False
+MONTHS = [('January', '1'), ('February', '2'), ('March', '3'), ('April', '4'),
+        ('May', '5'), ('June', '6'), ('July', '7'), ('August', '8'), ('September', '9'),
+        ('October', '10'), ('November', '11'), ('December', '12')]
 
 def list_files(dir):
     '''
@@ -82,3 +79,27 @@ def rename_actual_columns(actuals):
         df = df.rename(columns = {'OPERATIONAL_DEMAND':'OPERATIONAL_DEMAND_'+name})
         actuals[name] = df
     return actuals
+
+def convert_date(date):
+    '''
+    Convert ddMONTHyyyy strings to dd/mm/yy format used in data
+    '''
+    desired = re.search('\d(\d)([a-zA-Z]+)20(\d\d)', date)
+    if desired:
+        word_month = desired.group(2)
+        for (month, num_month) in MONTHS:
+            if month == word_month:
+                # convert date into required
+                desired = desired.group(1) + "/" + num_month + "/" + desired.group(3)
+                return desired
+    else:
+        return "Invalid date: " + str(date)
+
+def get_time_poe(name):
+    '''
+    Take as input something of the form: OPERATIONAL_DEMAND_POE10_201703010000
+    Return time=0000 and poe=POE10
+    '''
+    desired = re.search('OPERATIONAL_DEMAND_(POE\d\d)_2017\d\d\d\d(\d+)', name)
+    if desired:
+        return desired.group(2), desired.group(1)
