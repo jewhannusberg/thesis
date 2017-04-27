@@ -40,50 +40,17 @@ for fname, df in data.iteritems():
 
     error_POE90 = error.filter(regex="^OPERATIONAL_DEMAND_POE90_\d+$")
 
-    # plotting.save_all(error_POE10, fname)
-    # plotting.save_all(error_POE50, fname)
-    # plotting.save_all(error_POE90, fname)
-    """
-    '''To plot POE10 ALL vs actual'''
-    plt.plot(error_POE10[1:-1].values, linewidth=0.25)
-    plt.plot(actual_demand.values, color='k', linewidth=2)
-    plt.title("Actual demand against all POE10 forecasts for %s" % data_cleanup.remove_csv(fname))
-    plt.xlabel('Samples')
-    plt.ylabel('Demand (MW)')
-    plt.savefig("figures/poe10/POE10_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
-    # save to report figures also
-    plt.savefig("../Report/figures/poe10/POE10_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
-
-    '''To plot POE50 ALL vs actual'''
-    plt.plot(error_POE50[1:-1].values, linewidth=0.25)
-    plt.plot(actual_demand.values, color='k', linewidth=2)
-    plt.title("Actual demand against all POE50 forecasts for %s" % data_cleanup.remove_csv(fname))
-    plt.xlabel('Samples')
-    plt.ylabel('Demand (MW)')
-    plt.savefig("figures/poe50/POE50_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
-    # save to report figures also
-    plt.savefig("../Report/figures/poe50/POE50_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
-
-    '''To plot POE90 ALL vs actual'''
-    plt.plot(error_POE90[1:-1].values, linewidth=0.25)
-    plt.plot(actual_demand.values, color='k', linewidth=2)
-    plt.title("Actual demand against all POE90 forecasts for %s" % data_cleanup.remove_csv(fname))
-    plt.xlabel('Samples')
-    plt.ylabel('Demand (MW)')
-    plt.savefig("figures/poe90/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
-    # save to report figures also
-    plt.savefig("../Report/figures/poe90/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
-    """
+    plotting.save_all_plots(error_POE10, error_POE50, error_POE90, actual_demand, fname)
 
     '''Subtraction'''
-    error_POE10 = error_POE10[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
-    error_POE10.to_csv(POE10_DIR + fname)
+    # error_POE10 = error_POE10[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
+    # error_POE10.to_csv(POE10_DIR + fname)
 
-    error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
-    error_POE50.to_csv(POE50_DIR + fname)
+    # error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
+    # error_POE50.to_csv(POE50_DIR + fname)
 
-    error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
-    error_POE50.to_csv(POE50_DIR + fname)
+    # error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
+    # error_POE50.to_csv(POE50_DIR + fname)
 
 
 

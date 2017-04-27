@@ -5,9 +5,10 @@ import numpy as np
 import seaborn as sns; sns.set()
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import data_cleanup
 
 # Seaborn color settings
-col_pal = sns.color_palette("PuRd", n_colors=48)
+col_pal = sns.color_palette("RdGy", n_colors=48)
 sns.set_palette(col_pal)
 
 LABELS = ['0:30', '1:00', '1:30', '2:00', '2:30', '3:00', '3:30', '4:00', '4:30', '5:00', '5:30'
@@ -17,6 +18,7 @@ LABELS = ['0:30', '1:00', '1:30', '2:00', '2:30', '3:00', '3:30', '4:00', '4:30'
 
 
 def plot_error(error, actual_demand):
+    plt.clf()
     x_ax =  np.arange(len(error.OPERATIONAL_DEMAND))
     fig, ax = plt.subplots(1)
     ax.plot(error.OPERATIONAL_DEMAND_POE10, label='POE10 error')
@@ -32,8 +34,11 @@ def plot_error(error, actual_demand):
     # Include time taken from filename
     ax.set_title('Error variation')
     plt.show()
+    plt.close()
+    plt.clf()
 
 def plot_exceedance(forecasted_demand, actual_demand, count_POE, dist=10):
+    plt.clf()
     plt.plot(actual_demand['OPERATIONAL_DEMAND'].values, 'k:', label='Actual Demand', linewidth=1.5)
     # change the following line to only deal with a sinle day's worth of data
     plt.plot(forecasted_demand['OPERATIONAL_DEMAND_POE10'].values, 'r', label='POE10', linewidth=0.75)
@@ -41,9 +46,12 @@ def plot_exceedance(forecasted_demand, actual_demand, count_POE, dist=10):
     plt.title('POE'+str(dist)+' Exceedance of Actual Demand')
     plt.legend(loc='upper_left', shadow=False)
     plt.show()
+    plt.close()
+    plt.clf()
 
 def plot_data(demand_poe, actual_demand):
     # plot projected demand @ all POE
+    plt.clf()
     plt.plot(demand_poe['OPERATIONAL_DEMAND_POE10'].values, 'r', label='POE10', linewidth=0.75)
     plt.plot(demand_poe['OPERATIONAL_DEMAND_POE50'].values, 'b', label='POE50', linewidth=0.75)
     plt.plot(demand_poe['OPERATIONAL_DEMAND_POE90'].values, 'g', label='POE90', linewidth=0.75)
@@ -52,8 +60,11 @@ def plot_data(demand_poe, actual_demand):
     plt.legend(loc='upper left', shadow=True)
     plt.title('Demand distributions for %s' % forecast_names[0])
     plt.show()
+    plt.close()
+    plt.clf()
 
 def plot_forecast_vs_poe(df, time, dates):
+    plt.clf()
     labels = []
     for interval in df.INTERVAL_DATETIME:
         labels.append(interval)
@@ -70,17 +81,17 @@ def plot_forecast_vs_poe(df, time, dates):
     plt.legend(loc='upper left', shadow=True)
     plt.title('Demand distributions for %s' % time)
     plt.show()
+    plt.clf()
 
-def save_all_plots(error, fname):
+def save_all_plots(error_POE10, error_POE50, error_POE90, actual_demand, fname):
+    plt.clf()
     '''To plot POE10 ALL vs actual'''
     plt.plot(error_POE10[1:-1].values, linewidth=0.25)
     plt.plot(actual_demand.values, color='k', linewidth=2)
     plt.title("Actual demand against all POE10 forecasts for %s" % data_cleanup.remove_csv(fname))
     plt.xlabel('Samples')
     plt.ylabel('Demand (MW)')
-    # plt.savefig("figures/poe10/POE10_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
-    # save to report figures also
-    plt.savefig("../Report/figures/poe10/POE10_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    plt.savefig("../Report/figures/poe10/all_data/POE10_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
 
     '''To plot POE50 ALL vs actual'''
     plt.plot(error_POE50[1:-1].values, linewidth=0.25)
@@ -88,9 +99,7 @@ def save_all_plots(error, fname):
     plt.title("Actual demand against all POE50 forecasts for %s" % data_cleanup.remove_csv(fname))
     plt.xlabel('Samples')
     plt.ylabel('Demand (MW)')
-    # plt.savefig("figures/poe50/POE50_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
-    # save to report figures also
-    plt.savefig("../Report/figures/poe50/POE50_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    plt.savefig("../Report/figures/poe50/all_data/POE50_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
 
     '''To plot POE90 ALL vs actual'''
     plt.plot(error_POE90[1:-1].values, linewidth=0.25)
@@ -98,43 +107,48 @@ def save_all_plots(error, fname):
     plt.title("Actual demand against all POE90 forecasts for %s" % data_cleanup.remove_csv(fname))
     plt.xlabel('Samples')
     plt.ylabel('Demand (MW)')
-    # plt.savefig("figures/poe90/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
-    # save to report figures also
-    plt.savefig("../Report/figures/poe90/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    plt.savefig("../Report/figures/poe90/all_data/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    plt.clf()
 
-def plot_single_day_time_error(df, date, time, poe):
+def plot_single_day_time_error(df, date, time, poe, prefix):
     # Should take in a TIME and DATE argument to make general
     '''Plot the forecasts for that day'''
+    plt.clf()
     plt.plot(df[1:-1].values, linewidth=1)
     plt.ylim([-500,1000])
     plt.xticks(range(len(df[1:-1].values)), LABELS, rotation='vertical')
     plt.ylabel('Demand Error (MW)')
     plt.xlabel('Half-Hour Intervals')
     plt.title('Error between %s forecast and actual for %s forecasted at %s' % (poe, date, time))
-    plt.savefig("../Report/figures/%s_error/poe10_%s_daily_fcast_error.eps" % (poe.lower(), date.replace('/','')), format='eps', dpi=1200)
-    # plt.show()
-    # plt.close()
+    plt.savefig("../Report/figures/%s_error/single_day_forecast/%s%s_daily_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.clf()
 
-def plot_single_day_all_time_error(df):
-    # print df[1:-1].values
-    # exit()
-    # f, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex=True, sharey=True)
-    # ax1.plot(df[1:-1].values[0:11])
-    # ax1.set_title('Sharing both axes')
-    # ax2.plot(df[1:-1].values[11:22])
-    # ax3.plot(df[1:-1].values[22:33])
-    # ax4.plot(df[1:-1].values[33:46])
-
-    # # Fine-tune figure; make subplots close to each other and hide x ticks for
-    # # all but bottom plot.
-    # # f.subplots_adjust(hspace=0)
-    # plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
-
+def plot_single_day_all_time_error(df, date, poe, prefix):
+    # legend_names = list(df.index)
+    # legend_names.pop(0) # get rid of Unnamed: 0 column
+    plt.clf()
     plt.plot(df[1:-1].values, linewidth=0.75)
     plt.xticks(range(len(df[1:-1].values)), LABELS, rotation='vertical')
 
     for xc in range(1, len(df[1:-1].values-1)):
         plt.axvline(x=xc, color='k', linestyle=':', linewidth=0.25)
+    
+    plt.ylabel('Demand Error (MW)')
+    plt.xlabel('Half-Hour Intervals')
+    plt.title('Error between %s forecast and actual for %s forecasted at all times' % (poe, date))
+    plt.savefig("../Report/figures/%s_error/single_day_all_forecast/%s%s_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.clf()
 
-    plt.show()
-    plt.close()
+def plot_med_avg_error(avg_vals, med_vals, poe, date, prefix):
+    plt.clf()
+    plt.plot(avg_vals[1:-1].values, 'r', label='Average Error', linewidth=0.75)
+    plt.plot(med_vals[1:-1].values, 'b', label='Median Error', linewidth=0.75)
+    plt.ylabel('Demand Error (MW)')
+    plt.xlabel('Half-Hour Intervals')
+    plt.title('%s: Average error against median error for %s%s' % (poe, prefix, date))
+    # plt.xticks(range(len(avg_vals[1:-1].values)), LABELS, rotation='vertical')    
+    # for xc in range(1, len(avg_vals[1:-1].values-1)):
+        # plt.axvline(x=xc, color='k', linestyle=':', linewidth=0.25)
+    plt.legend(loc='upper left', shadow=True)
+    plt.savefig("../Report/figures/%s_error/avg_med/%s%s_avg_med_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.clf()

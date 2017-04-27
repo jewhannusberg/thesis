@@ -84,14 +84,15 @@ def convert_date(date):
     '''
     Convert ddMONTHyyyy strings to dd/mm/yy format used in data
     '''
-    desired = re.search('\d(\d)([a-zA-Z]+)20(\d\d)', date)
+    desired = re.search('(\d)(\d)([a-zA-Z]+)20(\d\d)', date)
     if desired:
-        word_month = desired.group(2)
+        prefix = desired.group(1)
+        word_month = desired.group(3)
         for (month, num_month) in MONTHS:
             if month == word_month:
                 # convert date into required
-                desired = desired.group(1) + "/" + num_month + "/" + desired.group(3)
-                return desired
+                desired = desired.group(2) + "/" + num_month + "/" + desired.group(4)
+                return desired, prefix
     else:
         return "Invalid date: " + str(date)
 

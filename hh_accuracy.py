@@ -11,9 +11,9 @@ from plotting import plot_error
 from plotting import plot_exceedance
 
 # Test on a single day first
-# FORECASTED_DIR = '../ForecastedData/09February2017' # Move back a directory to required date
-# ACTUAL_DIR = '../ActualData/09February2017'
-# STATE = 'NSW1'
+FORECASTED_DIR = '../ForecastedData/01March2017' # Move back a directory to required date
+ACTUAL_DIR = '../ActualData/01March2017'
+STATE = 'NSW1'
 
 def forecasted_demand_dataframes(forecast_files, forecast_names, state, dirx):
     demand_poe = pd.DataFrame() # initialise total dataframe
