@@ -31,13 +31,5 @@ def unzip_data(directory):
             print "deleting files not ending in .CSV"
             os.remove(fname)
 
-# days = [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
-# temp_DIRx = ""
-# for i in days:
-#     temp_DIRx = DIRx + str(i) + "February2017/"
-#     print temp_DIRx
-    # scrub_data(temp_DIRx)
-    # unzip_data(temp_DIRx)
 scrub_data(DIR)
 unzip_data(DIR)
-

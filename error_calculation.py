@@ -6,10 +6,12 @@ finally calculate the error
 import os
 import re
 import pandas as pd
-import data_cleanup
+from data_cleanup import remove_csv
+from data_cleanup import convert_date
 import plotting
 from collections import OrderedDict
 import matplotlib.pyplot as plt
+
 DIR = '../clean_data/'
 POE10_DIR = '../poe10_error/'
 POE50_DIR = '../poe50_error/'
@@ -30,6 +32,7 @@ for filename in os.listdir(DIR):
         continue
 
 for fname, df in data.iteritems():
+    date, prefix = convert_date(remove_csv(fname))
 
     error = df
 
@@ -40,17 +43,14 @@ for fname, df in data.iteritems():
 
     error_POE90 = error.filter(regex="^OPERATIONAL_DEMAND_POE90_\d+$")
 
-    plotting.save_all_plots(error_POE10, error_POE50, error_POE90, actual_demand, fname)
+    plotting.save_all_plots(error_POE10, error_POE50, error_POE90, actual_demand, fname, prefix, date)
 
     '''Subtraction'''
-    # error_POE10 = error_POE10[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
-    # error_POE10.to_csv(POE10_DIR + fname)
+    error_POE10 = error_POE10[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
+    error_POE10.to_csv(POE10_DIR + fname)
 
-    # error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
-    # error_POE50.to_csv(POE50_DIR + fname)
+    error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
+    error_POE50.to_csv(POE50_DIR + fname)
 
-    # error_POE50 = error_POE50[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
-    # error_POE50.to_csv(POE50_DIR + fname)
-
-
-
+    error_POE90 = error_POE90[1:-1].sub(actual_demand, axis=0) # FORECASTED MINUS ACTUAL
+    error_POE90.to_csv(POE90_DIR + fname)

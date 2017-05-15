@@ -5,7 +5,8 @@ import numpy as np
 import seaborn as sns; sns.set()
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import data_cleanup
+from data_cleanup import remove_csv
+from data_cleanup import convert_date
 
 # Seaborn color settings
 col_pal = sns.color_palette("RdGy", n_colors=48)
@@ -83,31 +84,31 @@ def plot_forecast_vs_poe(df, time, dates):
     plt.show()
     plt.clf()
 
-def save_all_plots(error_POE10, error_POE50, error_POE90, actual_demand, fname):
+def save_all_plots(error_POE10, error_POE50, error_POE90, actual_demand, fname, prefix, date):
     plt.clf()
     '''To plot POE10 ALL vs actual'''
     plt.plot(error_POE10[1:-1].values, linewidth=0.25)
     plt.plot(actual_demand.values, color='k', linewidth=2)
-    plt.title("Actual demand against all POE10 forecasts for %s" % data_cleanup.remove_csv(fname))
+    plt.title("Actual demand against all POE10 forecasts for %s%s" % (prefix, date))
     plt.xlabel('Samples')
     plt.ylabel('Demand (MW)')
-    plt.savefig("../Report/figures/poe10/all_data/POE10_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    plt.savefig("../Report/figures/poe10/all_data/POE10_v_actual_%s.eps" % remove_csv(fname), format='eps', dpi=1200)
 
     '''To plot POE50 ALL vs actual'''
     plt.plot(error_POE50[1:-1].values, linewidth=0.25)
     plt.plot(actual_demand.values, color='k', linewidth=2)
-    plt.title("Actual demand against all POE50 forecasts for %s" % data_cleanup.remove_csv(fname))
+    plt.title("Actual demand against all POE50 forecasts for %s%s" % (prefix, date))
     plt.xlabel('Samples')
     plt.ylabel('Demand (MW)')
-    plt.savefig("../Report/figures/poe50/all_data/POE50_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    plt.savefig("../Report/figures/poe50/all_data/POE50_v_actual_%s.eps" % remove_csv(fname), format='eps', dpi=1200)
 
     '''To plot POE90 ALL vs actual'''
     plt.plot(error_POE90[1:-1].values, linewidth=0.25)
     plt.plot(actual_demand.values, color='k', linewidth=2)
-    plt.title("Actual demand against all POE90 forecasts for %s" % data_cleanup.remove_csv(fname))
+    plt.title("Actual demand against all POE90 forecasts for %s%s" % (prefix, date))
     plt.xlabel('Samples')
     plt.ylabel('Demand (MW)')
-    plt.savefig("../Report/figures/poe90/all_data/POE90_v_actual_%s.eps" % data_cleanup.remove_csv(fname), format='eps', dpi=1200)
+    plt.savefig("../Report/figures/poe90/all_data/POE90_v_actual_%s.eps" % remove_csv(fname), format='eps', dpi=1200)
     plt.clf()
 
 def plot_single_day_time_error(df, date, time, poe, prefix):
@@ -120,7 +121,7 @@ def plot_single_day_time_error(df, date, time, poe, prefix):
     plt.ylabel('Demand Error (MW)')
     plt.xlabel('Half-Hour Intervals')
     plt.title('Error between %s forecast and actual for %s forecasted at %s' % (poe, date, time))
-    plt.savefig("../Report/figures/%s_error/single_day_forecast/%s%s_daily_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.savefig("../Report/figures/%s/single_day_forecast/%s%s_daily_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
     plt.clf()
 
 def plot_single_day_all_time_error(df, date, poe, prefix):
@@ -136,13 +137,13 @@ def plot_single_day_all_time_error(df, date, poe, prefix):
     plt.ylabel('Demand Error (MW)')
     plt.xlabel('Half-Hour Intervals')
     plt.title('Error between %s forecast and actual for %s forecasted at all times' % (poe, date))
-    plt.savefig("../Report/figures/%s_error/single_day_all_forecast/%s%s_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.savefig("../Report/figures/%s/single_day_all_forecast/%s%s_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
     plt.clf()
 
 def plot_med_avg_error(avg_vals, med_vals, poe, date, prefix):
     plt.clf()
-    plt.plot(avg_vals[1:-1].values, 'r', label='Average Error', linewidth=0.75)
-    plt.plot(med_vals[1:-1].values, 'b', label='Median Error', linewidth=0.75)
+    plt.plot(avg_vals[1:-1].values, color="#ff4d4d", label='Average Error', linewidth=0.75)
+    plt.plot(med_vals[1:-1].values, color="#6699ff", label='Median Error', linewidth=0.75)
     plt.ylabel('Demand Error (MW)')
     plt.xlabel('Half-Hour Intervals')
     plt.title('%s: Average error against median error for %s%s' % (poe, prefix, date))
@@ -150,5 +151,14 @@ def plot_med_avg_error(avg_vals, med_vals, poe, date, prefix):
     # for xc in range(1, len(avg_vals[1:-1].values-1)):
         # plt.axvline(x=xc, color='k', linestyle=':', linewidth=0.25)
     plt.legend(loc='upper left', shadow=True)
-    plt.savefig("../Report/figures/%s_error/avg_med/%s%s_avg_med_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.savefig("../Report/figures/%s/avg_med/%s%s_avg_med_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.clf()
+
+def plot_all_errors_one_graph(fname, POE10_data, POE50_data, POE90_data, date, prefix):
+    plt.clf()
+    plt.plot(POE10_data.values[1], color='r', label='POE10 Error', linewidth=0.75)
+    plt.plot(POE50_data.values[1], color='b', label='POE50 Error', linewidth=0.75)
+    plt.plot(POE90_data.values[1], color='g', label='POE90 Error', linewidth=0.75)
+    plt.show()
+    plt.close()
     plt.clf()
