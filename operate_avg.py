@@ -4,12 +4,13 @@ average POE50 error = y, average POE90 error = z. Use this to construct a histog
 
 # need to do:
 # 1. all average POE errors on the same plot
-# 2. when not on same figure, include horizontal line of overall average error
+# 2. count number of times error exceeds 0
 # 3. create csv file containing the single-value average of each day (should be easy after doing 2)
 # 4. create a histogram of these daily average error values for each POE level
 
 
 import os
+import numpy as np
 import pandas as pd
 from collections import OrderedDict
 import plotting
@@ -37,6 +38,9 @@ def get_data(directory):
     return filenames, data
 
 
+def exceeds_zero_error(df):
+    return df.values[1][np.where(df.values[1] > 0)].size
+
 # Need to read everything in this time
 POE10_filenames, POE10_data = get_data(POE10_DIR)
 POE50_filenames, POE50_data = get_data(POE50_DIR)
@@ -47,14 +51,27 @@ POE90_filenames, POE90_data = get_data(POE90_DIR)
 for fname, df in POE10_data.iteritems(): # dfs contain the average error values of the POE level specified above
     if fname == "19March2017.csv": # This date is broken.
         continue
-
+    print fname
     # get the date and prefix of date (0, 1, 2, etc)
     date, prefix = convert_date(remove_csv(fname))
 
+    # Plot all POE errors together
+    # plotting.plot_all_errors_one_graph(fname, df, POE50_data[fname], POE90_data[fname], date, prefix)
 
-    plotting.plot_all_errors_one_graph(fname, df, POE50_data[fname], POE90_data[fname], date, prefix)
+    # Count the number of times POEx exceeds 0 error
+    tot = df.values[1].size
+    poe10_exceedance = exceeds_zero_error(df)
+    poe50_exceedence = exceeds_zero_error(POE50_data[fname])
+    poe90_exceedence = exceeds_zero_error(POE90_data[fname])
+    x_ax = [poe10_exceedance, poe50_exceedence, poe90_exceedence]
+    x_prob = [1 - poe10_exceedance/float(tot), 1 - poe50_exceedence/float(tot), 1 - poe90_exceedence/float(tot)]
+    # Plot histogram
+    plotting.plot_exceedance_num(x_ax, prefix, date)
 
+    # Get average error value
 
-    exit()
+    # Plot histogram of average error
+
+    # exit()
 
 

@@ -124,24 +124,59 @@ def plot_single_day_time_error(df, date, time, poe, prefix):
     plt.savefig("../Report/figures/%s/single_day_forecast/%s%s_daily_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
     plt.clf()
 
-def plot_single_day_all_time_error(df, date, poe, prefix):
-    # legend_names = list(df.index)
-    # legend_names.pop(0) # get rid of Unnamed: 0 column
+
+def plot_poex_single_time_error(data_series, poe50_series, poe90_series, time, prefix, date):
     plt.clf()
+    col_pal = sns.color_palette("cubehelix", n_colors=3)
+    sns.set_palette(col_pal)
+    plt.plot(data_series[1:-1].values, label='POE10 error at 0000', linewidth=0.75)
+    plt.plot(poe50_series[1:-1].values, label='POE50 error at 0000', linewidth=0.75)
+    plt.plot(poe90_series[1:-1].values, label='POE90 error at 0000', linewidth=0.75)
+    plt.xticks(range(len(data_series[1:-1].values)), LABELS, rotation='vertical')
+    plt.ylabel('Demand Error (MW)')
+    plt.xlabel('Half-hour Interval')
+    plt.title('All level POE error for initial forecasts %s%s' % (prefix, date))
+    plt.legend(loc='upper left', shadow=True)
+    plt.savefig("../Report/figures/single_daytime_error_all/%s%s_fcast_error_poex.eps" % (prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.clf()
+
+def plot_poex_single_time_full_error(poe10_all, poe50_all, poe90_all, time, prefix, date):
+    plt.clf()
+    col_pal = sns.color_palette("husl", n_colors=3)
+    sns.set_palette(col_pal)
+    plt.plot(poe10_all[1:-1].values, label='Full POE10 error at 0000', linewidth=0.75)
+    plt.plot(poe50_all[1:-1].values, label='Full POE50 error at 0000', linewidth=0.75)
+    plt.plot(poe90_all[1:-1].values, label='Full POE90 error at 0000', linewidth=0.75)
+    plt.ylabel('Demand Error (MW)')
+    plt.xlabel('Half-hour Interval')
+    plt.title('All level POE error for initial forecasts beginning from %s%s extended' % (prefix, date))
+    plt.legend(loc='upper left', shadow=True)
+    plt.savefig("../Report/figures/single_time_error_all/%s%s_all_stime_error_poex.eps" % (prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.clf()
+
+def plot_single_day_all_time_error(df, date, poe, prefix):
+    plt.clf()
+    # Seaborn color settings
+    col_pal = sns.color_palette("RdGy", n_colors=48)
+    sns.set_palette(col_pal)
     plt.plot(df[1:-1].values, linewidth=0.75)
-    plt.xticks(range(len(df[1:-1].values)), LABELS, rotation='vertical')
+    # plt.xticks(range(len(df[1:-1].values)), LABELS, rotation='vertical')
 
     for xc in range(1, len(df[1:-1].values-1)):
         plt.axvline(x=xc, color='k', linestyle=':', linewidth=0.25)
-    
+
     plt.ylabel('Demand Error (MW)')
     plt.xlabel('Half-Hour Intervals')
     plt.title('Error between %s forecast and actual for %s forecasted at all times' % (poe, date))
-    plt.savefig("../Report/figures/%s/single_day_all_forecast/%s%s_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
+    # plt.savefig("../Report/figures/%s/single_day_all_forecast/%s%s_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.show()
+    plt.close()
     plt.clf()
 
 def plot_med_avg_error(avg_vals, med_vals, poe, date, prefix):
     plt.clf()
+    col_pal = sns.color_palette("cubehelix", n_colors=3)
+    sns.set_palette(col_pal)
     plt.plot(avg_vals[1:-1].values, color="#ff4d4d", label='Average Error', linewidth=0.75)
     plt.plot(med_vals[1:-1].values, color="#6699ff", label='Median Error', linewidth=0.75)
     plt.ylabel('Demand Error (MW)')
@@ -156,9 +191,34 @@ def plot_med_avg_error(avg_vals, med_vals, poe, date, prefix):
 
 def plot_all_errors_one_graph(fname, POE10_data, POE50_data, POE90_data, date, prefix):
     plt.clf()
-    plt.plot(POE10_data.values[1], color='r', label='POE10 Error', linewidth=0.75)
-    plt.plot(POE50_data.values[1], color='b', label='POE50 Error', linewidth=0.75)
-    plt.plot(POE90_data.values[1], color='g', label='POE90 Error', linewidth=0.75)
-    plt.show()
-    plt.close()
+    col_pal = sns.color_palette("cubehelix", n_colors=3)
+    sns.set_palette(col_pal)
+    plt.plot(POE10_data.values[1], label='POE10 Error', linewidth=0.75)
+    plt.plot(POE50_data.values[1], label='POE50 Error', linewidth=0.75)
+    plt.plot(POE90_data.values[1], label='POE90 Error', linewidth=0.75)
+    plt.title('POE10, POE50, and POE90 average errors for %s%s' % (prefix, date))
+    plt.legend(loc='upper left', shadow=True)
+    plt.ylabel('Demand Error (MW)')
+    plt.xlabel('Half-Hour Intervals')
+    plt.savefig("../Report/figures/error_all/avg_error_poex_%s%s.eps" % (prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.clf()
+
+def plot_exceedance_num(x_ax, prefix, date):
+    plt.clf()
+    col_pal = sns.color_palette("cubehelix", n_colors=3)
+    sns.set_palette(col_pal)
+    x_labels = ['POE10', 'POE50', 'POE90']
+    plt.xticks(range(len(x_ax)), x_labels, rotation='vertical')
+    bar_chart = plt.bar(range(len(x_labels)), x_ax)
+    bar_chart[0].set_color(sns.xkcd_rgb["light blue grey"])
+    bar_chart[1].set_color(sns.xkcd_rgb["seaweed green"])
+    bar_chart[2].set_color(sns.xkcd_rgb["light periwinkle"])
+    for a,b in zip(range(len(x_ax)), x_ax):
+        plt.text(a, b, str(b))
+    plt.ylabel('Frequency of Forecast Exceeding Actual')
+    plt.xlabel('POE Level')
+    plt.title('Frequency of each POE level exceeding actual demand for %s%s' % (prefix, date))
+    plt.savefig("../Report/figures/poe_exceed/exceeds_act_freq_%s%s.eps" % (prefix, date.replace('/','')), format='eps', dpi=1200)
+    # plt.show()
+    # plt.close()
     plt.clf()
