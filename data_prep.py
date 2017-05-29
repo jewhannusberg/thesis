@@ -2,16 +2,12 @@
 Clean up the ForecastedData folder where data is downloaded
 Unzip csv files
 '''
-
 import os
 import sys
 import glob
 import zipfile
-
-DIR = '../ForecastedData/31March2017/' # this should go through every folder in the directory
+DIR = '../ForecastedData/31March2017/'
 DIRx = '../ForecastedData/'
-# move listScraper.sh, data_prep.py, items.txt (for now), links.txt (for now) into /thesisb
-
 
 def scrub_data(directory):
     for root, _, files in os.walk(directory):

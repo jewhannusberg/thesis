@@ -11,7 +11,6 @@ import os
 import numpy as np
 import pandas as pd
 import collections
-'''Self-written module imports'''
 import data_cleanup
 from plotting import plot_error
 from plotting import plot_exceedance
@@ -36,25 +35,6 @@ actual_files, actual_names = data_cleanup.list_files(ACTUAL_DIR)
 
 # Get an actual demand dataframe
 actuals = actual_demand_dataframes(actual_files, actual_names, STATE, ACTUAL_DIR)
-
-# Compute deviation from actual demand
-# for f_file in range(len(forecast_files)):
-#     print "FILE NAME:" + data_cleanup.clean_fnames(forecast_files[f_file], FORECASTED_DIR)
-#     print forecasts[data_cleanup.clean_fnames(forecast_files[f_file], FORECASTED_DIR)]
-
-# for key, value in forecasts.iteritems():
-    # print key
-    # print value.INTERVAL_DATETIME
-    # value.merge(value, left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
-
-# Attempt to merge two dataframes based on column INTERVAL_DATETIME
-# SUCCESS!
-# check = pd.DataFrame()
-# check = forecasts['PUBLIC_FORECAST_OPERATIONAL_DEMAND_HH_201702202000_20170220193204'].merge(
-#     forecasts['PUBLIC_FORECAST_OPERATIONAL_DEMAND_HH_201702202030_20170220200204'],
-#     left_on='INTERVAL_DATETIME', right_on='INTERVAL_DATETIME', how='left')
-# check = check.transpose()
-# check.to_csv('check_merge.csv')
 
 # Rename columns -- needed for merge
 forecasts = data_cleanup.rename_forecast_columns(forecasts)

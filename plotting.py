@@ -1,6 +1,3 @@
-'''
-Plot findings here
-'''
 import numpy as np
 import seaborn as sns; sns.set()
 import matplotlib.pyplot as plt
@@ -28,11 +25,6 @@ def plot_error(error, actual_demand):
     ax.plot(actual_demand['OPERATIONAL_DEMAND'].values, 'k:', label='Actual Demand', linewidth=1.5)
     ax.legend(loc='upper_left', shadow=True)
     ax.set_ylim(-1500, 1500)
-    # ax.fill_between(x_ax, 0, error.OPERATIONAL_DEMAND_POE10)
-    # ax.fill_between(x_ax, 0, error.OPERATIONAL_DEMAND_POE50)
-    # ax.fill_between(x_ax, 0, error.OPERATIONAL_DEMAND_POE90)
-
-    # Include time taken from filename
     ax.set_title('Error variation')
     plt.show()
     plt.close()
@@ -41,7 +33,6 @@ def plot_error(error, actual_demand):
 def plot_exceedance(forecasted_demand, actual_demand, count_POE, dist=10):
     plt.clf()
     plt.plot(actual_demand['OPERATIONAL_DEMAND'].values, 'k:', label='Actual Demand', linewidth=1.5)
-    # change the following line to only deal with a sinle day's worth of data
     plt.plot(forecasted_demand['OPERATIONAL_DEMAND_POE10'].values, 'r', label='POE10', linewidth=0.75)
     plt.plot(count_POE, label='POE'+str(dist), linewidth=1.5)
     plt.title('POE'+str(dist)+' Exceedance of Actual Demand')
@@ -51,12 +42,10 @@ def plot_exceedance(forecasted_demand, actual_demand, count_POE, dist=10):
     plt.clf()
 
 def plot_data(demand_poe, actual_demand):
-    # plot projected demand @ all POE
     plt.clf()
     plt.plot(demand_poe['OPERATIONAL_DEMAND_POE10'].values, 'r', label='POE10', linewidth=0.75)
     plt.plot(demand_poe['OPERATIONAL_DEMAND_POE50'].values, 'b', label='POE50', linewidth=0.75)
     plt.plot(demand_poe['OPERATIONAL_DEMAND_POE90'].values, 'g', label='POE90', linewidth=0.75)
-    # Overlay actual demand
     plt.plot(actual_demand['OPERATIONAL_DEMAND'].values, 'k:', label='Actual Demand', linewidth=1.5)
     plt.legend(loc='upper left', shadow=True)
     plt.title('Demand distributions for %s' % forecast_names[0])
@@ -73,10 +62,8 @@ def plot_forecast_vs_poe(df, time, dates):
     plt.plot(df['OPERATIONAL_DEMAND_POE50_'+time].values, 'b', label='POE50', linewidth=0.75)
     plt.plot(df['OPERATIONAL_DEMAND_POE90_'+time].values, 'g', label='POE90', linewidth=0.75)
     colors = cm.rainbow(np.linspace(0, 1, len(dates)))
-    # use color=colors[ix] to cycle through colour spectrum
     for ix, date in enumerate(dates):
         plt.plot(df['OPERATIONAL_DEMAND_'+date].values, color=colors[ix], linewidth=1.6)
-    # plt.xticks(range(len(labels),5), labels, rotation='horizontal')
     plt.xlabel('Samples')
     plt.ylabel('Demand')
     plt.legend(loc='upper left', shadow=True)
@@ -112,7 +99,6 @@ def save_all_plots(error_POE10, error_POE50, error_POE90, actual_demand, fname, 
     plt.clf()
 
 def plot_single_day_time_error(df, date, time, poe, prefix):
-    # Should take in a TIME and DATE argument to make general
     '''Plot the forecasts for that day'''
     plt.clf()
     plt.plot(df[1:-1].values, linewidth=1)
@@ -156,19 +142,18 @@ def plot_poex_single_time_full_error(poe10_all, poe50_all, poe90_all, time, pref
 
 def plot_single_day_all_time_error(df, date, poe, prefix):
     plt.clf()
-    # Seaborn color settings
     col_pal = sns.color_palette("RdGy", n_colors=48)
     sns.set_palette(col_pal)
-    plt.plot(df[1:-1].values, linewidth=0.75)
-    # plt.xticks(range(len(df[1:-1].values)), LABELS, rotation='vertical')
+    plt.plot(df.transpose().values[:,1:-1], linewidth=0.75)
+    plt.xticks(range(len(df[1:-1].values)), LABELS, rotation='vertical')
 
-    for xc in range(1, len(df[1:-1].values-1)):
+    for xc in range(1, len(df[1:-1].values)):
         plt.axvline(x=xc, color='k', linestyle=':', linewidth=0.25)
 
     plt.ylabel('Demand Error (MW)')
     plt.xlabel('Half-Hour Intervals')
     plt.title('Error between %s forecast and actual for %s forecasted at all times' % (poe, date))
-    # plt.savefig("../Report/figures/%s/single_day_all_forecast/%s%s_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
+    plt.savefig("../Report/figures/%s/single_day_all_forecast/%s%s_fcast_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
     plt.show()
     plt.close()
     plt.clf()
@@ -182,9 +167,6 @@ def plot_med_avg_error(avg_vals, med_vals, poe, date, prefix):
     plt.ylabel('Demand Error (MW)')
     plt.xlabel('Half-Hour Intervals')
     plt.title('%s: Average error against median error for %s%s' % (poe, prefix, date))
-    # plt.xticks(range(len(avg_vals[1:-1].values)), LABELS, rotation='vertical')    
-    # for xc in range(1, len(avg_vals[1:-1].values-1)):
-        # plt.axvline(x=xc, color='k', linestyle=':', linewidth=0.25)
     plt.legend(loc='upper left', shadow=True)
     plt.savefig("../Report/figures/%s/avg_med/%s%s_avg_med_error.eps" % (poe.lower(), prefix, date.replace('/','')), format='eps', dpi=1200)
     plt.clf()
@@ -219,6 +201,38 @@ def plot_exceedance_num(x_ax, prefix, date):
     plt.xlabel('POE Level')
     plt.title('Frequency of each POE level exceeding actual demand for %s%s' % (prefix, date))
     plt.savefig("../Report/figures/poe_exceed/exceeds_act_freq_%s%s.eps" % (prefix, date.replace('/','')), format='eps', dpi=1200)
-    # plt.show()
-    # plt.close()
     plt.clf()
+
+def generate_multi_bar(x, y, z):
+
+    col_pal = sns.color_palette("RdGy", n_colors=2)
+    sns.set_palette(col_pal)
+
+    ax = plt.subplot(111)
+    w = 0.15
+    x_labels = ['POE10', 'POE50', 'POE90']
+    def autolabel(rects):
+        """
+        Attach a text label above each bar displaying its height
+        """
+        for rect in rects:
+            height = rect.get_height()
+            ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+                    '%d' % int(height),
+                    ha='center', va='bottom')
+
+    first = ax.bar(x, y,width=w,align='center')
+    second = ax.bar(x+w, z,width=w,align='center')
+    ax.autoscale(tight=True)
+    ax.set_ylabel('Frequency')
+    ax.set_xlabel('POE Level')
+    ax.set_ylim([0, 430])
+    ax.set_title('Frequency of forecasted demand exceeding for 09/02/17 and 10/02/17')
+    ax.set_xticks(x + w / 2)
+    ax.set_xticklabels(x_labels)
+
+    autolabel(first)
+    autolabel(second)
+
+    ax.legend((first[0], second[0]), ('09/02/17', '10/02/17'))
+    plt.savefig("../Report/figures/exceed_poster.eps", format='eps', dpi=1200)

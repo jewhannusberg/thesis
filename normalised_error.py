@@ -1,22 +1,20 @@
+'''
+Calculate the normalised values of the error score at each half-hour interval
+'''
+
 import os
-import numpy as np
+import re
 import pandas as pd
-import matplotlib.pyplot as plt
-from collections import OrderedDict
-from data_cleanup import convert_date
 from data_cleanup import remove_csv
-from data_cleanup import get_time_poe
-from plotting import plot_single_day_time_error
-from plotting import plot_single_day_all_time_error
-from plotting import plot_med_avg_error
-from plotting import plot_poex_single_time_error
-from plotting import plot_poex_single_time_full_error
+from data_cleanup import convert_date
+import plotting
+from collections import OrderedDict
+import matplotlib.pyplot as plt
 
 POE10_DIR = '../poe10_error/'
 POE50_DIR = '../poe50_error/'
 POE90_DIR = '../poe90_error/'
 
-# separate the relevant information from data here
 def get_data(directory):
     data = OrderedDict()
     filenames = []
@@ -37,11 +35,12 @@ POE90_filenames, POE90_data = get_data(POE90_DIR)
 
 for fname, df in POE10_data.iteritems():
     date, prefix = convert_date(remove_csv(fname))
-    # limit the data to the specified date
-    poe10_single_day = df.filter(regex=date)
-    # print poe10_single_day.shape
-    poe50_single_day = POE50_data[fname].filter(regex=date)
-    poe90_single_day = POE90_data[fname].filter(regex=date)
-    time, poe = get_time_poe(poe10_single_day.iloc[1,:].name)
-    plot_single_day_all_time_error(poe10_single_day, date, poe, prefix)
+    df = df.filter(regex="^OPERATIONAL_DEMAND_POE10_\d+$")
+
+    plt.plot(norm_POE10.values)
+    plt.show()
+    plt.close()
+    # norm_POE50
+    # norm_POE90
+
     exit()
